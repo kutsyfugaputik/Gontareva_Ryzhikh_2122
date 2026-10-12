@@ -46,6 +46,27 @@ while (true)
     case "profile":
         Console.WriteLine($"{firstName} {lastName}, {birthYear}");
         break;
+    case "add":
+        {
+            // add "текст задачи": разбиваем по кавычкам, текст оказывается в parts[1]
+            string[] parts = input.Split('"');
+            if (parts.Length < 3 || parts[1].Trim() == "")
+            {
+                Console.WriteLine("Ошибка. Формат: add \"текст задачи\"");
+                break;
+            }
+
+            if (todoCount == todos.Length)
+            {
+                Console.WriteLine("Нет места в массиве"); // временно, заменим на расширение
+                break;
+            }
+
+            todos[todoCount] = parts[1];
+            todoCount++;
+            Console.WriteLine("Задача добавлена");
+            break;
+        }
 
     // Команда "exit" — завершает работу программы
     case "exit":
