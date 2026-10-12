@@ -2,38 +2,38 @@
 Console.WriteLine();
 
 Console.Write("Введите имя: ");
-string firstName = Console.ReadLine(); // чтение имени пользователя
+string firstName = Console.ReadLine(); // имя
 
 Console.Write("Введите фамилию: ");
-string lastName = Console.ReadLine(); // чтение фамилии пользователя
+string lastName = Console.ReadLine(); // фамилия
 
 Console.Write("Введите год рождения: ");
-string birthYearText = Console.ReadLine(); // чтение года рождения пользователя
+string birthYearText = Console.ReadLine(); // год рождения (пока строкой)
 
-int birthYear = int.Parse(birthYearText); // преобразование года рождения в целое число
-int age = DateTime.Now.Year - birthYear; // вычисление возраста пользователя
+int birthYear = int.Parse(birthYearText); // переводим в число
+int age = DateTime.Now.Year - birthYear;  // считаем возраст
 
 Console.WriteLine($"Добавлен пользователь {firstName} {lastName}, возраст - {age}");    
 
 Console.WriteLine("Введите help, чтобы увидеть список команд.");
 
-string[] todos = new string[2]; // массив задач с небольшой начальной длиной
-int todoCount = 0;              // количество реально добавленных задач
+string[] todos = new string[2]; // пока массив на 2 задачи
+int todoCount = 0;              // сколько задач уже занято
 
 while (true)
 {
     Console.Write("> ");
     string input = (Console.ReadLine() ?? "").Trim();
 
-    if (input == "")
+    if (input == "") // пустую строку пропускаем
     {
         continue;
     }
 
-    string command = input.Split(' ')[0]; // первое слово - название команды
+    string command = input.Split(' ')[0]; // берём только первое слово — саму команду
     switch (command)
     {
-    // Команда "help" — выводит список всех доступных команд
+    // help — шпаргалка по командам
     case "help":
         Console.WriteLine("help    - список всех команд");
         Console.WriteLine("profile - данные пользователя");
@@ -42,12 +42,13 @@ while (true)
         Console.WriteLine("exit    - завершить программу");
         break;
 
+    // view — печатаем все непустые задачи
     case "view":
         {
             bool hasTasks = false;
             for (int i = 0; i < todos.Length; i++)
             {
-                if (!string.IsNullOrEmpty(todos[i])) // только непустые элементы
+                if (!string.IsNullOrEmpty(todos[i])) // пустые ячейки не показываем
                 {
                     Console.WriteLine($"{i + 1}. {todos[i]}");
                     hasTasks = true;
@@ -60,13 +61,15 @@ while (true)
             break;
         }
 
-    // Команда "profile" — выводит данные пользователя
+    // profile — кто у нас в системе
     case "profile":
         Console.WriteLine($"{firstName} {lastName}, {birthYear}");
         break;
+
+    // add "текст" — кладём задачу в массив
     case "add":
         {
-            // add "текст задачи": разбиваем по кавычкам, текст оказывается в parts[1]
+            // режем строку по кавычкам: между ними и есть текст задачи
             string[] parts = input.Split('"');
             if (parts.Length < 3 || parts[1].Trim() == "")
             {
@@ -76,7 +79,7 @@ while (true)
 
             if (todoCount == todos.Length)
             {
-                Console.WriteLine("Нет места в массиве"); // временно, заменим на расширение
+                Console.WriteLine("Нет места в массиве"); // потом сделаем расширение
                 break;
             }
 
@@ -86,12 +89,12 @@ while (true)
             break;
         }
 
-    // Команда "exit" — завершает работу программы
+    // exit — выходим из программы
     case "exit":
         Console.WriteLine("Завершение работы");
-        return; // выход из метода/программы
+        return;
 
-    // Любая другая команда — сообщение об ошибке
+    // всё остальное — не команда
     default:
         Console.WriteLine("Неизвестная команда. Введите help.");
         break;
