@@ -34,10 +34,16 @@ while (true)
 
     switch (command)
     {
+        case "help":
+            Console.WriteLine("help    - список всех команд");
+            Console.WriteLine("profile - данные пользователя");
+            Console.WriteLine("add     - добавить задачу, формат: add \"текст задачи\"");
+            Console.WriteLine("view    - показать все задачи");
+            Console.WriteLine("exit    - завершить программу");
+            break;
         case "exit":
             Console.WriteLine("Завершение работы");
             return;
-
         default:
             Console.WriteLine("Неизвестная команда. Введите help.");
             break;
