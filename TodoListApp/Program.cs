@@ -31,21 +31,30 @@ while (true)
     }
 
     string command = input.Split(' ')[0]; // первое слово - название команды
-
     switch (command)
     {
-        case "help":
-            Console.WriteLine("help    - список всех команд");
-            Console.WriteLine("profile - данные пользователя");
-            Console.WriteLine("add     - добавить задачу, формат: add \"текст задачи\"");
-            Console.WriteLine("view    - показать все задачи");
-            Console.WriteLine("exit    - завершить программу");
-            break;
-        case "exit":
-            Console.WriteLine("Завершение работы");
-            return;
-        default:
-            Console.WriteLine("Неизвестная команда. Введите help.");
-            break;
+    // Команда "help" — выводит список всех доступных команд
+    case "help":
+        Console.WriteLine("help    - список всех команд");
+        Console.WriteLine("profile - данные пользователя");
+        Console.WriteLine("add     - добавить задачу, формат: add \"текст задачи\"");
+        Console.WriteLine("view    - показать все задачи");
+        Console.WriteLine("exit    - завершить программу");
+        break;
+
+    // Команда "profile" — выводит данные пользователя
+    case "profile":
+        Console.WriteLine($"{firstName} {lastName}, {birthYear}");
+        break;
+
+    // Команда "exit" — завершает работу программы
+    case "exit":
+        Console.WriteLine("Завершение работы");
+        return; // выход из метода/программы
+
+    // Любая другая команда — сообщение об ошибке
+    default:
+        Console.WriteLine("Неизвестная команда. Введите help.");
+        break;
     }
 }
