@@ -14,3 +14,32 @@ int birthYear = int.Parse(birthYearText); // преобразование год
 int age = DateTime.Now.Year - birthYear; // вычисление возраста пользователя
 
 Console.WriteLine($"Добавлен пользователь {firstName} {lastName}, возраст - {age}");    
+
+Console.WriteLine("Введите help, чтобы увидеть список команд.");
+
+string[] todos = new string[2]; // массив задач с небольшой начальной длиной
+int todoCount = 0;              // количество реально добавленных задач
+
+while (true)
+{
+    Console.Write("> ");
+    string input = (Console.ReadLine() ?? "").Trim();
+
+    if (input == "")
+    {
+        continue;
+    }
+
+    string command = input.Split(' ')[0]; // первое слово - название команды
+
+    switch (command)
+    {
+        case "exit":
+            Console.WriteLine("Завершение работы");
+            return;
+
+        default:
+            Console.WriteLine("Неизвестная команда. Введите help.");
+            break;
+    }
+}
