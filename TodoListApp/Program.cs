@@ -42,6 +42,24 @@ while (true)
         Console.WriteLine("exit    - завершить программу");
         break;
 
+    case "view":
+        {
+            bool hasTasks = false;
+            for (int i = 0; i < todos.Length; i++)
+            {
+                if (!string.IsNullOrEmpty(todos[i])) // только непустые элементы
+                {
+                    Console.WriteLine($"{i + 1}. {todos[i]}");
+                    hasTasks = true;
+                }
+            }
+            if (!hasTasks)
+            {
+                Console.WriteLine("Список задач пуст");
+            }
+            break;
+        }
+
     // Команда "profile" — выводит данные пользователя
     case "profile":
         Console.WriteLine($"{firstName} {lastName}, {birthYear}");
