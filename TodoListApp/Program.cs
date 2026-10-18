@@ -19,6 +19,8 @@ const string CommandView = "view";
 const string CommandExit = "exit";
 string[] todos = new string[InitialCapacity]; // пока массив на 2 задачи
 int todoCount = 0;              // сколько задач уже занято
+bool[] statuses = new bool[InitialCapacity];       // выполнена ли задача
+DateTime[] dates = new DateTime[InitialCapacity];  // дата создания / изменения
 void ShowHelp()
 {
     Console.WriteLine("help    - список всех команд");
@@ -46,15 +48,23 @@ void ViewTasks()
         Console.WriteLine("Список задач пуст");
     }
 }
+T[] ExpandArray<T>(T[] oldArray, int newSize)
+{
+    T[] newArray = new T[newSize];
+    for (int i = 0; i < oldArray.Length; i++)
+    {
+        newArray[i] = oldArray[i];
+    }
+    return newArray;
+}
+
 void ExpandArrays()
 {
-    string[] newTodos = new string[todos.Length * GrowthFactor];
-    for (int i = 0; i < todos.Length; i++)
-    {
-        newTodos[i] = todos[i];
-    }
-    todos = newTodos;
-    Console.WriteLine($"(массив расширен до {todos.Length})");
+    int newSize = todos.Length * GrowthFactor;
+    todos = ExpandArray(todos, newSize);
+    statuses = ExpandArray(statuses, newSize);
+    dates = ExpandArray(dates, newSize);
+    Console.WriteLine($"(массив расширен до {newSize})");
 }
 void AddTask(string args)
 {
