@@ -17,6 +17,8 @@ const string CommandProfile = "profile";
 const string CommandAdd = "add";
 const string CommandView = "view";
 const string CommandExit = "exit";
+const string DoneText = "сделано";
+const string NotDoneText = "не сделано";
 string[] todos = new string[InitialCapacity]; // пока массив на 2 задачи
 int todoCount = 0;              // сколько задач уже занято
 bool[] statuses = new bool[InitialCapacity];       // выполнена ли задача
@@ -37,15 +39,15 @@ void ShowProfile()
 
 void ViewTasks()
 {
-    bool hasTasks = false;
-    for (int i = 0; i < todoCount; i++)
-    {
-        Console.WriteLine($"{i + 1}. {todos[i]}");
-        hasTasks = true;
-    }
-    if (!hasTasks)
+    if (todoCount == 0)
     {
         Console.WriteLine("Список задач пуст");
+        return;
+    }
+    for (int i = 0; i < todoCount; i++)
+    {
+        string status = statuses[i] ? DoneText : NotDoneText;
+        Console.WriteLine($"{i + 1} {todos[i]} {status} {dates[i]}");
     }
 }
 T[] ExpandArray<T>(T[] oldArray, int newSize)
@@ -62,8 +64,10 @@ void ExpandArrays()
 {
     int newSize = todos.Length * GrowthFactor;
     todos = ExpandArray(todos, newSize);
-    statuses = ExpandArray(statuses, newSize);
-    dates = ExpandArray(dates, newSize);
+    todos[todoCount] = parts[1];
+    statuses[todoCount] = false;
+    dates[todoCount] = DateTime.Now;
+    todoCount++;
     Console.WriteLine($"(массив расширен до {newSize})");
 }
 void AddTask(string args)
