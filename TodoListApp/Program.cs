@@ -17,6 +17,7 @@ const string CommandProfile = "profile";
 const string CommandAdd = "add";
 const string CommandView = "view";
 const string CommandExit = "exit";
+const string CommandDone = "done";
 const string DoneText = "сделано";
 const string NotDoneText = "не сделано";
 string[] todos = new string[InitialCapacity]; // пока массив на 2 задачи
@@ -85,6 +86,25 @@ void AddTask(string args)
     todoCount++;
     Console.WriteLine("Задача добавлена");
 }
+bool TryGetIndex(string text, out int index)
+{
+    if (int.TryParse(text.Trim(), out int number) && number >= 1 && number <= todoCount)
+    {
+        index = number - 1;   // пользователь вводит с 1, внутри — с 0
+        return true;
+    }
+    index = -1;
+    Console.WriteLine("Ошибка. Неверный номер задачи.");
+    return false;
+}
+
+void DoneTask(string args)
+{
+    if (!TryGetIndex(args, out int index)) return;
+    statuses[index] = true;
+    dates[index] = DateTime.Now;
+    Console.WriteLine("Задача отмечена выполненной");
+}
 while (true)
 {
     Console.Write("> ");
@@ -101,6 +121,7 @@ while (true)
         case CommandProfile: ShowProfile(); break;
         case CommandAdd:     AddTask(args); break;
         case CommandView:    ViewTasks(); break;
+        case CommandDone: DoneTask(args); break;
         case CommandExit:
             Console.WriteLine("Завершение работы");
             return;
