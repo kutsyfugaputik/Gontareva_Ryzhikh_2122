@@ -10,7 +10,14 @@ int birthYear = int.Parse(birthYearText); // переводим в число
 int age = DateTime.Now.Year - birthYear;  // считаем возраст
 Console.WriteLine($"Добавлен пользователь {firstName} {lastName}, возраст - {age}");
 Console.WriteLine("Введите help, чтобы увидеть список команд.");
-string[] todos = new string[2]; // пока массив на 2 задачи
+const int InitialCapacity = 2;   // начальная длина массива
+const int GrowthFactor = 2;      // во сколько раз растёт массив
+const string CommandHelp = "help";
+const string CommandProfile = "profile";
+const string CommandAdd = "add";
+const string CommandView = "view";
+const string CommandExit = "exit";
+string[] todos = new string[InitialCapacity]; // пока массив на 2 задачи
 int todoCount = 0;              // сколько задач уже занято
 while (true)
 {
@@ -24,7 +31,7 @@ while (true)
     switch (command)
     {
         // help — шпаргалка по командам
-        case "help":
+        case CommandHelp:
             Console.WriteLine("help    - список всех команд");
             Console.WriteLine("profile - данные пользователя");
             Console.WriteLine("add     - добавить задачу, формат: add \"текст задачи\"");
@@ -32,7 +39,7 @@ while (true)
             Console.WriteLine("exit    - завершить программу");
             break;
         // view — печатаем все непустые задачи
-        case "view":
+        case CommandView:
             {
                 bool hasTasks = false;
                 for (int i = 0; i < todos.Length; i++)
@@ -50,11 +57,11 @@ while (true)
                 break;
             }
         // profile — кто у нас в системе
-        case "profile":
+        case CommandProfile:
             Console.WriteLine($"{firstName} {lastName}, {birthYear}");
             break;
         // add "текст" — кладём задачу в массив
-        case "add":
+        case CommandAdd:
             {
                 // режем строку по кавычкам: между ними и есть текст задачи
                 string[] parts = input.Split('"');
@@ -66,7 +73,7 @@ while (true)
                 // если места нет — расширяем массив в 2 раза
                 if (todoCount == todos.Length)
                 {
-                    string[] newTodos = new string[todos.Length * 2]; // новый массив вдвое длиннее
+                    string[] newTodos = new string[todos.Length * GrowthFactor]; // новый массив вдвое длиннее
                     for (int i = 0; i < todos.Length; i++)
                     {
                         newTodos[i] = todos[i]; // переписываем всё старое
@@ -80,12 +87,13 @@ while (true)
                 break;
             }
         // exit — выходим из программы
-        case "exit":
+        case CommandExit:
             Console.WriteLine("Завершение работы");
             return;
         // всё остальное — не команда
-        default:
+        case CommandDefault:
             Console.WriteLine("Неизвестная команда. Введите help.");
             break;
     }
 }
+
