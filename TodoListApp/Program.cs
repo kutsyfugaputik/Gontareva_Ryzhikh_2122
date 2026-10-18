@@ -46,7 +46,16 @@ void ViewTasks()
         Console.WriteLine("Список задач пуст");
     }
 }
-
+void ExpandArrays()
+{
+    string[] newTodos = new string[todos.Length * GrowthFactor];
+    for (int i = 0; i < todos.Length; i++)
+    {
+        newTodos[i] = todos[i];
+    }
+    todos = newTodos;
+    Console.WriteLine($"(массив расширен до {todos.Length})");
+}
 void AddTask(string args)
 {
     // режем строку по кавычкам: между ними и есть текст задачи
@@ -57,16 +66,7 @@ void AddTask(string args)
         return;
     }
     // если места нет — расширяем массив
-    if (todoCount == todos.Length)
-    {
-        string[] newTodos = new string[todos.Length * GrowthFactor];
-        for (int i = 0; i < todos.Length; i++)
-        {
-            newTodos[i] = todos[i];
-        }
-        todos = newTodos;
-        Console.WriteLine($"(массив расширен до {todos.Length})");
-    }
+    if (todoCount == todos.Length) ExpandArrays();
     todos[todoCount] = parts[1];
     todoCount++;
     Console.WriteLine("Задача добавлена");
