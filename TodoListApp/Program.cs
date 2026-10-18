@@ -19,6 +19,58 @@ const string CommandView = "view";
 const string CommandExit = "exit";
 string[] todos = new string[InitialCapacity]; // пока массив на 2 задачи
 int todoCount = 0;              // сколько задач уже занято
+void ShowHelp()
+{
+    Console.WriteLine("help    - список всех команд");
+    Console.WriteLine("profile - данные пользователя");
+    Console.WriteLine("add     - добавить задачу, формат: add \"текст задачи\"");
+    Console.WriteLine("view    - показать все задачи");
+    Console.WriteLine("exit    - завершить программу");
+}
+
+void ShowProfile()
+{
+    Console.WriteLine($"{firstName} {lastName}, {birthYear}");
+}
+
+void ViewTasks()
+{
+    bool hasTasks = false;
+    for (int i = 0; i < todoCount; i++)
+    {
+        Console.WriteLine($"{i + 1}. {todos[i]}");
+        hasTasks = true;
+    }
+    if (!hasTasks)
+    {
+        Console.WriteLine("Список задач пуст");
+    }
+}
+
+void AddTask(string args)
+{
+    // режем строку по кавычкам: между ними и есть текст задачи
+    string[] parts = args.Split('"');
+    if (parts.Length < 3 || parts[1].Trim() == "")
+    {
+        Console.WriteLine("Ошибка. Формат: add \"текст задачи\"");
+        return;
+    }
+    // если места нет — расширяем массив
+    if (todoCount == todos.Length)
+    {
+        string[] newTodos = new string[todos.Length * GrowthFactor];
+        for (int i = 0; i < todos.Length; i++)
+        {
+            newTodos[i] = todos[i];
+        }
+        todos = newTodos;
+        Console.WriteLine($"(массив расширен до {todos.Length})");
+    }
+    todos[todoCount] = parts[1];
+    todoCount++;
+    Console.WriteLine("Задача добавлена");
+}
 while (true)
 {
     Console.Write("> ");
@@ -28,70 +80,17 @@ while (true)
         continue;
     }
     string command = input.Split(' ')[0]; // берём только первое слово — саму команду
-    switch (command)
+    string args = input.Length > command.Length ? input.Substring(command.Length).Trim() : "";
+        switch (command)
     {
-        // help — шпаргалка по командам
-        case CommandHelp:
-            Console.WriteLine("help    - список всех команд");
-            Console.WriteLine("profile - данные пользователя");
-            Console.WriteLine("add     - добавить задачу, формат: add \"текст задачи\"");
-            Console.WriteLine("view    - показать все задачи");
-            Console.WriteLine("exit    - завершить программу");
-            break;
-        // view — печатаем все непустые задачи
-        case CommandView:
-            {
-                bool hasTasks = false;
-                for (int i = 0; i < todos.Length; i++)
-                {
-                    if (!string.IsNullOrEmpty(todos[i])) // пустые ячейки не показываем
-                    {
-                        Console.WriteLine($"{i + 1}. {todos[i]}");
-                        hasTasks = true;
-                    }
-                }
-                if (!hasTasks)
-                {
-                    Console.WriteLine("Список задач пуст");
-                }
-                break;
-            }
-        // profile — кто у нас в системе
-        case CommandProfile:
-            Console.WriteLine($"{firstName} {lastName}, {birthYear}");
-            break;
-        // add "текст" — кладём задачу в массив
-        case CommandAdd:
-            {
-                // режем строку по кавычкам: между ними и есть текст задачи
-                string[] parts = input.Split('"');
-                if (parts.Length < 3 || parts[1].Trim() == "")
-                {
-                    Console.WriteLine("Ошибка. Формат: add \"текст задачи\"");
-                    break;
-                }
-                // если места нет — расширяем массив в 2 раза
-                if (todoCount == todos.Length)
-                {
-                    string[] newTodos = new string[todos.Length * GrowthFactor]; // новый массив вдвое длиннее
-                    for (int i = 0; i < todos.Length; i++)
-                    {
-                        newTodos[i] = todos[i]; // переписываем всё старое
-                    }
-                    todos = newTodos; // теперь todos указывает на новый массив
-                    Console.WriteLine($"(массив расширен до {todos.Length})");
-                }
-                todos[todoCount] = parts[1];
-                todoCount++;
-                Console.WriteLine("Задача добавлена");
-                break;
-            }
-        // exit — выходим из программы
+        case CommandHelp:    ShowHelp(); break;
+        case CommandProfile: ShowProfile(); break;
+        case CommandAdd:     AddTask(args); break;
+        case CommandView:    ViewTasks(); break;
         case CommandExit:
             Console.WriteLine("Завершение работы");
             return;
-        // всё остальное — не команда
-        case CommandDefault:
+        default:
             Console.WriteLine("Неизвестная команда. Введите help.");
             break;
     }
