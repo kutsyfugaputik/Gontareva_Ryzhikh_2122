@@ -33,6 +33,9 @@ void ShowHelp()
     Console.WriteLine("add     - добавить задачу, формат: add \"текст задачи\"");
     Console.WriteLine("view    - показать все задачи");
     Console.WriteLine("exit    - завершить программу");
+    Console.WriteLine("done    - отметить задачу выполненной, формат: done <номер>");
+    Console.WriteLine("delete  - удалить задачу, формат: delete <номер>");
+    Console.WriteLine("update  - изменить задачу, формат: update <номер> \"новый текст\"");
 }
 
 void ShowProfile()
@@ -67,24 +70,25 @@ void ExpandArrays()
 {
     int newSize = todos.Length * GrowthFactor;
     todos = ExpandArray(todos, newSize);
-    todos[todoCount] = parts[1];
-    statuses[todoCount] = false;
-    dates[todoCount] = DateTime.Now;
-    todoCount++;
+    statuses = ExpandArray(statuses, newSize);
+    dates = ExpandArray(dates, newSize);
     Console.WriteLine($"(массив расширен до {newSize})");
 }
-void AddTask(string args)
+void AddTask(string commandArgs)
 {
     // режем строку по кавычкам: между ними и есть текст задачи
-    string[] parts = args.Split('"');
+    string[] parts = commandArgs.Split('"');
     if (parts.Length < 3 || parts[1].Trim() == "")
     {
         Console.WriteLine("Ошибка. Формат: add \"текст задачи\"");
         return;
     }
-    // если места нет — расширяем массив
+    // если места нет — расширяем массивы
     if (todoCount == todos.Length) ExpandArrays();
+
     todos[todoCount] = parts[1];
+    statuses[todoCount] = false;
+    dates[todoCount] = DateTime.Now;
     todoCount++;
     Console.WriteLine("Задача добавлена");
 }
@@ -100,16 +104,16 @@ bool TryGetIndex(string text, out int index)
     return false;
 }
 
-void DoneTask(string args)
+void DoneTask(string commandArgs)
 {
-    if (!TryGetIndex(args, out int index)) return;
+    if (!TryGetIndex(commandArgs, out int index)) return;
     statuses[index] = true;
     dates[index] = DateTime.Now;
     Console.WriteLine("Задача отмечена выполненной");
 }
-void DeleteTask(string args)
+void DeleteTask(string commandArgs)
 {
-    if (!TryGetIndex(args, out int index)) return;
+    if (!TryGetIndex(commandArgs, out int index)) return;
 
     // сдвигаем все следующие элементы всех массивов влево
     for (int i = index; i < todoCount - 1; i++)
@@ -124,10 +128,10 @@ void DeleteTask(string args)
     dates[todoCount] = default;
     Console.WriteLine("Задача удалена");
 }
-void UpdateTask(string args)
+void UpdateTask(string commandArgs)
 {
     // формат: update <номер> "новый текст"
-    string[] parts = args.Split('"');
+    string[] parts = commandArgs.Split('"');
     if (parts.Length < 3 || parts[1].Trim() == "")
     {
         Console.WriteLine("Ошибка. Формат: update <номер> \"новый текст\"");
@@ -148,16 +152,16 @@ while (true)
         continue;
     }
     string command = input.Split(' ')[0]; // берём только первое слово — саму команду
-    string args = input.Length > command.Length ? input.Substring(command.Length).Trim() : "";
+    string commandArgs = input.Length > command.Length ? input.Substring(command.Length).Trim() : "";
         switch (command)
     {
         case CommandHelp:    ShowHelp(); break;
         case CommandProfile: ShowProfile(); break;
-        case CommandAdd:     AddTask(args); break;
+        case CommandAdd:     AddTask(commandArgs); break;
         case CommandView:    ViewTasks(); break;
-        case CommandDone: DoneTask(args); break;
-        case CommandDelete: DeleteTask(args); break;
-        case CommandUpdate: UpdateTask(args); break;
+        case CommandDone: DoneTask(commandArgs); break;
+        case CommandDelete: DeleteTask(commandArgs); break;
+        case CommandUpdate: UpdateTask(commandArgs); break;
         case CommandExit:
             Console.WriteLine("Завершение работы");
             return;
