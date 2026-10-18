@@ -19,6 +19,7 @@ const string CommandView = "view";
 const string CommandExit = "exit";
 const string CommandDone = "done";
 const string CommandDelete = "delete";
+const string CommandUpdate = "update";
 const string DoneText = "сделано";
 const string NotDoneText = "не сделано";
 string[] todos = new string[InitialCapacity]; // пока массив на 2 задачи
@@ -123,6 +124,21 @@ void DeleteTask(string args)
     dates[todoCount] = default;
     Console.WriteLine("Задача удалена");
 }
+void UpdateTask(string args)
+{
+    // формат: update <номер> "новый текст"
+    string[] parts = args.Split('"');
+    if (parts.Length < 3 || parts[1].Trim() == "")
+    {
+        Console.WriteLine("Ошибка. Формат: update <номер> \"новый текст\"");
+        return;
+    }
+    if (!TryGetIndex(parts[0], out int index)) return;
+
+    todos[index] = parts[1];
+    dates[index] = DateTime.Now;
+    Console.WriteLine("Задача обновлена");
+}
 while (true)
 {
     Console.Write("> ");
@@ -141,6 +157,7 @@ while (true)
         case CommandView:    ViewTasks(); break;
         case CommandDone: DoneTask(args); break;
         case CommandDelete: DeleteTask(args); break;
+        case CommandUpdate: UpdateTask(args); break;
         case CommandExit:
             Console.WriteLine("Завершение работы");
             return;
