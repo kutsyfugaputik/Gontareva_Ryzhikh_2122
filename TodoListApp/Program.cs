@@ -18,6 +18,7 @@ const string CommandAdd = "add";
 const string CommandView = "view";
 const string CommandExit = "exit";
 const string CommandDone = "done";
+const string CommandDelete = "delete";
 const string DoneText = "сделано";
 const string NotDoneText = "не сделано";
 string[] todos = new string[InitialCapacity]; // пока массив на 2 задачи
@@ -105,6 +106,23 @@ void DoneTask(string args)
     dates[index] = DateTime.Now;
     Console.WriteLine("Задача отмечена выполненной");
 }
+void DeleteTask(string args)
+{
+    if (!TryGetIndex(args, out int index)) return;
+
+    // сдвигаем все следующие элементы всех массивов влево
+    for (int i = index; i < todoCount - 1; i++)
+    {
+        todos[i] = todos[i + 1];
+        statuses[i] = statuses[i + 1];
+        dates[i] = dates[i + 1];
+    }
+    todoCount--;
+    todos[todoCount] = "";
+    statuses[todoCount] = false;
+    dates[todoCount] = default;
+    Console.WriteLine("Задача удалена");
+}
 while (true)
 {
     Console.Write("> ");
@@ -122,6 +140,7 @@ while (true)
         case CommandAdd:     AddTask(args); break;
         case CommandView:    ViewTasks(); break;
         case CommandDone: DoneTask(args); break;
+        case CommandDelete: DeleteTask(args); break;
         case CommandExit:
             Console.WriteLine("Завершение работы");
             return;
