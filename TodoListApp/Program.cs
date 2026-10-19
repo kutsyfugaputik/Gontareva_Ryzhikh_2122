@@ -12,6 +12,11 @@ Console.WriteLine($"Добавлен пользователь {firstName} {lastN
 Console.WriteLine("Введите help, чтобы увидеть список команд.");
 const int InitialCapacity = 2;   // начальная длина массива
 const int GrowthFactor = 2;      // во сколько раз растёт массив
+const int TextPreviewLength = 30;
+const int IndexWidth = 5;
+const int TextColumnWidth = TextPreviewLength + 3;   // 30 символов + "..."
+const int StatusWidth = 10;
+const int DateWidth = 16;
 const string CommandHelp = "help";
 const string CommandProfile = "profile";
 const string CommandAdd = "add";
@@ -43,17 +48,49 @@ void ShowProfile()
     Console.WriteLine($"{firstName} {lastName}, {birthYear}");
 }
 
-void ViewTasks()
+string ShortText(string text)
 {
+    text = text.Replace("\n", " ");
+    return text.Length > TextPreviewLength
+        ? text.Substring(0, TextPreviewLength) + "..."
+        : text;
+}
+
+void ViewTasks(string commandArgs)
+{
+    var flags = ParseFlags(commandArgs);
+    bool showAll = HasFlag(flags, "all", "a");
+    bool showIndex = showAll || HasFlag(flags, "index", "i");
+    bool showStatus = showAll || HasFlag(flags, "status", "s");
+    bool showDate = showAll || HasFlag(flags, "update-date", "d");
+
     if (todoCount == 0)
     {
         Console.WriteLine("Список задач пуст");
         return;
     }
+
+    string BuildRow(string index, string text, string status, string date)
+    {
+        string row = "";
+        if (showIndex) row += index.PadRight(IndexWidth) + " | ";
+        row += text.PadRight(TextColumnWidth);
+        if (showStatus) row += " | " + status.PadRight(StatusWidth);
+        if (showDate) row += " | " + date.PadRight(DateWidth);
+        return row;
+    }
+
+    string header = BuildRow("Index", "Text", "Status", "Updated");
+    Console.WriteLine(header);
+    Console.WriteLine(new string('-', header.Length));
+
     for (int i = 0; i < todoCount; i++)
     {
-        string status = statuses[i] ? DoneText : NotDoneText;
-        Console.WriteLine($"{i + 1} {todos[i]} {status} {dates[i]}");
+        Console.WriteLine(BuildRow(
+            (i + 1).ToString(),
+            ShortText(todos[i]),
+            statuses[i] ? DoneText : NotDoneText,
+            dates[i].ToString("dd.MM.yyyy HH:mm")));
     }
 }
 T[] ExpandArray<T>(T[] oldArray, int newSize)
@@ -215,7 +252,7 @@ while (true)
         case CommandHelp:    ShowHelp(); break;
         case CommandProfile: ShowProfile(); break;
         case CommandAdd:     AddTask(commandArgs); break;
-        case CommandView:    ViewTasks(); break;
+        case CommandView: ViewTasks(commandArgs); break;
         case CommandDone: DoneTask(commandArgs); break;
         case CommandDelete: DeleteTask(commandArgs); break;
         case CommandUpdate: UpdateTask(commandArgs); break;
