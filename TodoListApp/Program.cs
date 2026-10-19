@@ -54,12 +54,13 @@ void ShowHelp()
 {
     Console.WriteLine("help    - список всех команд");
     Console.WriteLine("profile - данные пользователя");
-    Console.WriteLine("add     - добавить задачу, формат: add \"текст задачи\"");
-    Console.WriteLine("view    - показать все задачи");
+    Console.WriteLine("add     - добавить задачу: add \"текст\" или add --multiline (-m), конец ввода: !end");
+    Console.WriteLine("view    - таблица задач. Флаги: --index/-i, --status/-s, --update-date/-d, --all/-a");
+    Console.WriteLine("read    - полный текст задачи: read <номер>");
+    Console.WriteLine("done    - отметить выполненной: done <номер>");
+    Console.WriteLine("update  - изменить задачу: update <номер> \"новый текст\"");
+    Console.WriteLine("delete  - удалить задачу: delete <номер>");
     Console.WriteLine("exit    - завершить программу");
-    Console.WriteLine("done    - отметить задачу выполненной, формат: done <номер>");
-    Console.WriteLine("delete  - удалить задачу, формат: delete <номер>");
-    Console.WriteLine("update  - изменить задачу, формат: update <номер> \"новый текст\"");
 }
 
 void ShowProfile()
