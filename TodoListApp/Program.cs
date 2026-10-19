@@ -1,13 +1,31 @@
-﻿Console.WriteLine("Работу выполнили Гонтарева Юлия и Рыжих Вероника");
+﻿// минимально допустимый год рождения (проверка ввода)
+const int MinBirthYear = 1900;
+
+Console.WriteLine("Работу выполнили Гонтарева Юлия и Рыжих Вероника");
 Console.WriteLine();
+
+// имя и фамилия: если ReadLine вернул null, берём пустую строку
 Console.Write("Введите имя: ");
-string firstName = Console.ReadLine(); // имя
+string firstName = Console.ReadLine() ?? ""; // имя
 Console.Write("Введите фамилию: ");
-string lastName = Console.ReadLine(); // фамилия
-Console.Write("Введите год рождения: ");
-string birthYearText = Console.ReadLine(); // год рождения (пока строкой)
-int birthYear = int.Parse(birthYearText); // переводим в число
-int age = DateTime.Now.Year - birthYear;  // считаем возраст
+string lastName = Console.ReadLine() ?? ""; // фамилия
+
+// год рождения: спрашиваем, пока пользователь не введёт корректное число
+int birthYear;
+while (true)
+{
+    Console.Write("Введите год рождения: ");
+    // TryParse возвращает true, если строку удалось превратить в число
+    if (int.TryParse(Console.ReadLine(), out birthYear)
+        && birthYear >= MinBirthYear           // не раньше 1900
+        && birthYear <= DateTime.Now.Year)     // и не из будущего
+    {
+        break; // ввод верный, выходим из цикла
+    }
+    Console.WriteLine("Ошибка. Введите год числом, например 2005.");
+}
+
+int age = DateTime.Now.Year - birthYear; // считаем возраст
 Console.WriteLine($"Добавлен пользователь {firstName} {lastName}, возраст - {age}");
 Console.WriteLine("Введите help, чтобы увидеть список команд.");
 const int InitialCapacity = 2;   // начальная длина массива
