@@ -76,17 +76,32 @@ void ExpandArrays()
 }
 void AddTask(string commandArgs)
 {
-    // режем строку по кавычкам: между ними и есть текст задачи
-    string[] parts = commandArgs.Split('"');
-    if (parts.Length < 3 || parts[1].Trim() == "")
+    var flags = ParseFlags(commandArgs);
+    string text;
+
+    if (HasFlag(flags, "multiline", "m"))
     {
-        Console.WriteLine("Ошибка. Формат: add \"текст задачи\"");
+        text = ReadMultilineText();
+    }
+    else
+    {
+        string[] parts = commandArgs.Split('"');
+        if (parts.Length < 3 || parts[1].Trim() == "")
+        {
+            Console.WriteLine("Ошибка. Формат: add \"текст задачи\" или add --multiline");
+            return;
+        }
+        text = parts[1];
+    }
+
+    if (text.Trim() == "")
+    {
+        Console.WriteLine("Ошибка. Задача пустая");
         return;
     }
-    // если места нет — расширяем массивы
-    if (todoCount == todos.Length) ExpandArrays();
 
-    todos[todoCount] = parts[1];
+    if (todoCount == todos.Length) ExpandArrays();
+    todos[todoCount] = text;
     statuses[todoCount] = false;
     dates[todoCount] = DateTime.Now;
     todoCount++;
@@ -144,11 +159,11 @@ void UpdateTask(string commandArgs)
     Console.WriteLine("Задача обновлена");
 }
 
-HashSet<string> ParseFlags(string args)
+HashSet<string> ParseFlags(string commandArgs)
 {
     var flags = new HashSet<string>();
     // флаги ищем только до первых кавычек, чтобы не принять текст задачи за флаг
-    string flagsPart = args.Split('"')[0];
+    string flagsPart = commandArgs.Split('"')[0];
     foreach (string token in flagsPart.Split(' ', StringSplitOptions.RemoveEmptyEntries))
     {
         if (token.StartsWith("--"))
@@ -170,7 +185,20 @@ bool HasFlag(HashSet<string> flags, string longName, string shortName)
 {
     return flags.Contains(longName) || flags.Contains(shortName);
 }
-
+string ReadMultilineText()
+{
+    var lines = new List<string>();
+    Console.WriteLine("Вводите строки. Для завершения введите !end");
+    while (true)
+    {
+        Console.Write("> ");
+        string? line = Console.ReadLine();
+        if (line == null || line.Trim() == "!end") break;
+        if (line.StartsWith("> ")) line = line.Substring(2);   // если пользователь сам ввёл "> "
+        lines.Add(line);
+    }
+    return string.Join("\n", lines);
+}
 
 while (true)
 {
