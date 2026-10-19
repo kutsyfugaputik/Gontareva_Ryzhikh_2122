@@ -143,6 +143,35 @@ void UpdateTask(string commandArgs)
     dates[index] = DateTime.Now;
     Console.WriteLine("Задача обновлена");
 }
+
+HashSet<string> ParseFlags(string args)
+{
+    var flags = new HashSet<string>();
+    // флаги ищем только до первых кавычек, чтобы не принять текст задачи за флаг
+    string flagsPart = args.Split('"')[0];
+    foreach (string token in flagsPart.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+    {
+        if (token.StartsWith("--"))
+        {
+            flags.Add(token.Substring(2).ToLower());
+        }
+        else if (token.StartsWith("-"))
+        {
+            foreach (char c in token.Substring(1))   // -is = -i и -s
+            {
+                flags.Add(char.ToLower(c).ToString());
+            }
+        }
+    }
+    return flags;
+}
+
+bool HasFlag(HashSet<string> flags, string longName, string shortName)
+{
+    return flags.Contains(longName) || flags.Contains(shortName);
+}
+
+
 while (true)
 {
     Console.Write("> ");
