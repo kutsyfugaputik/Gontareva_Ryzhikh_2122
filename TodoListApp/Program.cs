@@ -25,6 +25,7 @@ const string CommandExit = "exit";
 const string CommandDone = "done";
 const string CommandDelete = "delete";
 const string CommandUpdate = "update";
+const string CommandRead = "read";
 const string DoneText = "сделано";
 const string NotDoneText = "не сделано";
 string[] todos = new string[InitialCapacity]; // пока массив на 2 задачи
@@ -195,6 +196,14 @@ void UpdateTask(string commandArgs)
     dates[index] = DateTime.Now;
     Console.WriteLine("Задача обновлена");
 }
+void ReadTask(string commandArgs)
+{
+    if (!TryGetIndex(commandArgs, out int index)) return;
+
+    Console.WriteLine($"Текст: {todos[index]}");
+    Console.WriteLine($"Статус: {(statuses[index] ? "выполнена" : "не выполнена")}");
+    Console.WriteLine($"Последнее изменение: {dates[index]:dd.MM.yyyy HH:mm}");
+}
 
 HashSet<string> ParseFlags(string commandArgs)
 {
@@ -256,6 +265,7 @@ while (true)
         case CommandDone: DoneTask(commandArgs); break;
         case CommandDelete: DeleteTask(commandArgs); break;
         case CommandUpdate: UpdateTask(commandArgs); break;
+        case CommandRead: ReadTask(commandArgs); break;
         case CommandExit:
             Console.WriteLine("Завершение работы");
             return;
